@@ -1,0 +1,302 @@
+[
+  {
+    "incident_id": "HWC-2026-101",
+    "timestamp": "2026-06-25T23:15:00Z",
+    "species": "Leopard",
+    "location_name": "Sanjay Gandhi National Park, Maharashtra",
+    "coordinates": { "latitude": 19.2147, "longitude": 72.9106 },
+    "severity": "High",
+    "conflict_type": "Periphery Wall Breach",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-102",
+    "timestamp": "2026-06-26T01:30:00Z",
+    "species": "Elephant",
+    "location_name": "Bandipur National Park, Karnataka",
+    "coordinates": { "latitude": 11.6667, "longitude": 76.6333 },
+    "severity": "High",
+    "conflict_type": "Highway Blockade",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-103",
+    "timestamp": "2026-06-26T02:45:00Z",
+    "species": "Tiger",
+    "location_name": "Corbett Tiger Reserve, Uttarakhand",
+    "coordinates": { "latitude": 29.5300, "longitude": 78.7747 },
+    "severity": "Medium",
+    "conflict_type": "Livestock Depredation",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-104",
+    "timestamp": "2026-06-26T04:10:00Z",
+    "species": "Wild Boar",
+    "location_name": "Sariska Tiger Reserve, Rajasthan",
+    "coordinates": { "latitude": 27.3167, "longitude": 76.4333 },
+    "severity": "Low",
+    "conflict_type": "Agricultural Damage",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-105",
+    "timestamp": "2026-06-26T05:20:00Z",
+    "species": "Rhinoceros",
+    "location_name": "Kaziranga National Park, Assam",
+    "coordinates": { "latitude": 26.5775, "longitude": 93.1711 },
+    "severity": "High",
+    "conflict_type": "Village Intrusion",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-106",
+    "timestamp": "2026-06-26T06:05:00Z",
+    "species": "Elephant",
+    "location_name": "Wayanad Wildlife Sanctuary, Kerala",
+    "coordinates": { "latitude": 11.7373, "longitude": 76.3270 },
+    "severity": "Medium",
+    "conflict_type": "Crop Raiding",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-107",
+    "timestamp": "2026-06-26T07:45:00Z",
+    "species": "Sloth Bear",
+    "location_name": "Daroji Bear Sanctuary, Karnataka",
+    "coordinates": { "latitude": 15.2633, "longitude": 76.5392 },
+    "severity": "High",
+    "conflict_type": "Human Encounter",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-108",
+    "timestamp": "2026-06-26T08:30:00Z",
+    "species": "Crocodile",
+    "location_name": "Bhitarkanika National Park, Odisha",
+    "coordinates": { "latitude": 20.7303, "longitude": 86.8647 },
+    "severity": "Medium",
+    "conflict_type": "Fishing Net Destruction",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-109",
+    "timestamp": "2026-06-26T09:15:00Z",
+    "species": "Tiger",
+    "location_name": "Sundarbans National Park, West Bengal",
+    "coordinates": { "latitude": 21.9497, "longitude": 88.8753 },
+    "severity": "High",
+    "conflict_type": "Buffer Zone Breach",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-110",
+    "timestamp": "2026-06-26T10:05:00Z",
+    "species": "Wolf",
+    "location_name": "Velavadar Blackbuck Sanctuary, Gujarat",
+    "coordinates": { "latitude": 21.0125, "longitude": 72.0355 },
+    "severity": "Low",
+    "conflict_type": "Sighting Near Settlement",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-111",
+    "timestamp": "2026-06-26T11:20:00Z",
+    "species": "Elephant",
+    "location_name": "Manas National Park, Assam",
+    "coordinates": { "latitude": 26.6594, "longitude": 91.0011 },
+    "severity": "Medium",
+    "conflict_type": "Tea Estate Intrusion",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-112",
+    "timestamp": "2026-06-26T12:35:00Z",
+    "species": "Leopard",
+    "location_name": "Jhalana Leopard Safari, Rajasthan",
+    "coordinates": { "latitude": 26.8530, "longitude": 75.8203 },
+    "severity": "Medium",
+    "conflict_type": "Stray Dog Predation",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-113",
+    "timestamp": "2026-06-26T13:50:00Z",
+    "species": "Tiger",
+    "location_name": "Kanha Tiger Reserve, Madhya Pradesh",
+    "coordinates": { "latitude": 22.3345, "longitude": 80.6115 },
+    "severity": "High",
+    "conflict_type": "Cattle Kill",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-114",
+    "timestamp": "2026-06-26T14:15:00Z",
+    "species": "Wild Boar",
+    "location_name": "Mudumalai National Park, Tamil Nadu",
+    "coordinates": { "latitude": 11.5833, "longitude": 76.5333 },
+    "severity": "Low",
+    "conflict_type": "Fence Damage",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-115",
+    "timestamp": "2026-06-26T15:40:00Z",
+    "species": "Rhinoceros",
+    "location_name": "Pobitara Wildlife Sanctuary, Assam",
+    "coordinates": { "latitude": 26.2425, "longitude": 92.0520 },
+    "severity": "Medium",
+    "conflict_type": "Crop Grazing",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-116",
+    "timestamp": "2026-06-26T16:25:00Z",
+    "species": "Elephant",
+    "location_name": "Periyar National Park, Kerala",
+    "coordinates": { "latitude": 9.4679, "longitude": 77.1433 },
+    "severity": "High",
+    "conflict_type": "Property Damage",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-117",
+    "timestamp": "2026-06-26T17:10:00Z",
+    "species": "Sloth Bear",
+    "location_name": "Satpura Tiger Reserve, Madhya Pradesh",
+    "coordinates": { "latitude": 22.4167, "longitude": 78.0000 },
+    "severity": "Medium",
+    "conflict_type": "Orchard Foraging",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-118",
+    "timestamp": "2026-06-26T18:05:00Z",
+    "species": "Tiger",
+    "location_name": "Bandhavgarh National Park, Madhya Pradesh",
+    "coordinates": { "latitude": 23.7225, "longitude": 81.0256 },
+    "severity": "High",
+    "conflict_type": "Village Proximity Alert",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-119",
+    "timestamp": "2026-06-26T19:30:00Z",
+    "species": "Leopard",
+    "location_name": "Rajaji National Park, Uttarakhand",
+    "coordinates": { "latitude": 30.0167, "longitude": 78.0000 },
+    "severity": "Medium",
+    "conflict_type": "Livestock Shed Attack",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-120",
+    "timestamp": "2026-06-26T20:15:00Z",
+    "species": "Crocodile",
+    "location_name": "National Chambal Sanctuary, Uttar Pradesh",
+    "coordinates": { "latitude": 26.7900, "longitude": 78.9600 },
+    "severity": "Low",
+    "conflict_type": "Riverbank Basking (Close to Ghat)",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-121",
+    "timestamp": "2026-06-26T21:40:00Z",
+    "species": "Elephant",
+    "location_name": "Simlipal National Park, Odisha",
+    "coordinates": { "latitude": 21.9333, "longitude": 86.3833 },
+    "severity": "High",
+    "conflict_type": "Village Intrusion",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-122",
+    "timestamp": "2026-06-26T22:50:00Z",
+    "species": "Wolf",
+    "location_name": "Desert National Park, Rajasthan",
+    "coordinates": { "latitude": 26.7167, "longitude": 70.5333 },
+    "severity": "Low",
+    "conflict_type": "Goat Herd Harassment",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-123",
+    "timestamp": "2026-06-27T00:15:00Z",
+    "species": "Tiger",
+    "location_name": "Tadoba Andhari Tiger Reserve, Maharashtra",
+    "coordinates": { "latitude": 20.2411, "longitude": 79.3172 },
+    "severity": "High",
+    "conflict_type": "Highway Crossing",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-124",
+    "timestamp": "2026-06-27T01:30:00Z",
+    "species": "Wild Boar",
+    "location_name": "Nagarhole National Park, Karnataka",
+    "coordinates": { "latitude": 12.0469, "longitude": 76.1381 },
+    "severity": "Medium",
+    "conflict_type": "Tuber Crop Destruction",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-125",
+    "timestamp": "2026-06-27T03:05:00Z",
+    "species": "Leopard",
+    "location_name": "Gir National Park Periphery, Gujarat",
+    "coordinates": { "latitude": 21.1306, "longitude": 70.8036 },
+    "severity": "High",
+    "conflict_type": "Calf Predation",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-126",
+    "timestamp": "2026-06-27T04:20:00Z",
+    "species": "Elephant",
+    "location_name": "Anamalai Tiger Reserve, Tamil Nadu",
+    "coordinates": { "latitude": 10.4286, "longitude": 77.0506 },
+    "severity": "High",
+    "conflict_type": "Forest Camp Damage",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-127",
+    "timestamp": "2026-06-27T05:45:00Z",
+    "species": "Rhinoceros",
+    "location_name": "Orang National Park, Assam",
+    "coordinates": { "latitude": 26.5414, "longitude": 92.2742 },
+    "severity": "Medium",
+    "conflict_type": "Straying outside Boundary",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-128",
+    "timestamp": "2026-06-27T06:50:00Z",
+    "species": "Tiger",
+    "location_name": "Pench Tiger Reserve, Madhya Pradesh",
+    "coordinates": { "latitude": 21.6667, "longitude": 79.2500 },
+    "severity": "High",
+    "conflict_type": "Territorial Roar near Settlement",
+    "status": "Active"
+  },
+  {
+    "incident_id": "HWC-2026-129",
+    "timestamp": "2026-06-27T08:10:00Z",
+    "species": "Sloth Bear",
+    "location_name": "Jessore Sloth Bear Sanctuary, Gujarat",
+    "coordinates": { "latitude": 24.5000, "longitude": 72.5333 },
+    "severity": "Medium",
+    "conflict_type": "Apiary (Beehive) Destruction",
+    "status": "Resolved"
+  },
+  {
+    "incident_id": "HWC-2026-130",
+    "timestamp": "2026-06-27T09:30:00Z",
+    "species": "Elephant",
+    "location_name": "Gorumara National Park, West Bengal",
+    "coordinates": { "latitude": 26.7460, "longitude": 88.8236 },
+    "severity": "High",
+    "conflict_type": "Railway Track Proximity",
+    "status": "Active"
+  }
+]
