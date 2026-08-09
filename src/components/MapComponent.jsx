@@ -89,8 +89,14 @@ const MapComponent = () => {
       setIncidents((prevList) => [newAlert, ...prevList]);
     });
 
+    const handleStorage = () => {
+      setMapLayer(localStorage.getItem('mapLayer') || 'street');
+    };
+    window.addEventListener('storage', handleStorage);
+
     return () => {
       socket.disconnect();
+      window.removeEventListener('storage', handleStorage);
     };
   }, []);
 

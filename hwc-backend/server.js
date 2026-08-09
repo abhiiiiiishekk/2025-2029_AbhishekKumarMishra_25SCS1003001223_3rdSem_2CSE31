@@ -261,6 +261,94 @@ app.post('/api/predict', protectRoute, (req, res) => {
   }
 });
 
+// ==========================================
+// 🦏 KAZIRANGA SPECIFIC AI PREDICTION
+// ==========================================
+
+const kazirangaRules = {
+  'Indian Rhinoceros': {
+    severity: 'Critical',
+    confidence: 92,
+    hotspot_zone: 'Bagori Range (Western Zone)',
+    movement_direction: 'Moving South towards NH37 due to flooded plains.',
+    expected_time: '18:00 - 02:00',
+    reason: 'Heavy monsoon flooding in the northern Brahmaputra banks is pushing Rhinos south to higher grounds near the highway.',
+    recommended_actions: ['Deploy night thermal drone patrols', 'Alert NH37 traffic authorities for speed restrictions', 'Setup barricades near Haldibari corridor']
+  },
+  'Asian Elephant': {
+    severity: 'High',
+    confidence: 88,
+    hotspot_zone: 'Kohora Range (Central Zone)',
+    movement_direction: 'Crossing NH37 towards Karbi Anglong Hills.',
+    expected_time: '20:00 - 04:00',
+    reason: 'Seasonal migration route active. Herd movement detected via sensor grid near the tea estates.',
+    recommended_actions: ['Activate elephant repellent acoustic systems', 'Coordinate with local tea estate managers', 'Prepare rapid response team']
+  },
+  'Royal Bengal Tiger': {
+    severity: 'High',
+    confidence: 85,
+    hotspot_zone: 'Agoratoli Range (Eastern Zone)',
+    movement_direction: 'Patrolling periphery near fringe villages.',
+    expected_time: 'Dusk to Dawn (17:00 - 05:00)',
+    reason: 'Decrease in natural prey density in the eastern buffer is leading to livestock depredation attempts.',
+    recommended_actions: ['Issue village alert for livestock securing', 'Deploy camera traps near village boundary', 'Intensify foot patrols']
+  },
+  'Wild Water Buffalo': {
+    severity: 'Medium',
+    confidence: 78,
+    hotspot_zone: 'Burapahar Range',
+    movement_direction: 'Grazing near the boundary limits.',
+    expected_time: '06:00 - 10:00',
+    reason: 'Searching for fresh grass shoots outside the submerged park boundaries.',
+    recommended_actions: ['Monitor movement via watchtowers', 'Drive back into park using non-lethal deterrents if they cross the line']
+  },
+  'Swamp Deer': {
+    severity: 'Low',
+    confidence: 95,
+    hotspot_zone: 'Kohora Range marshlands',
+    movement_direction: 'Stationary grazing.',
+    expected_time: 'Daytime',
+    reason: 'Normal foraging behavior in their natural habitat.',
+    recommended_actions: ['Standard monitoring', 'No immediate intervention required']
+  },
+  'Wild Boar': {
+    severity: 'Medium',
+    confidence: 82,
+    hotspot_zone: 'Fringe agricultural lands across all ranges',
+    movement_direction: 'Incursions into nearby crop fields.',
+    expected_time: 'Night time (21:00 - 03:00)',
+    reason: 'Crop harvesting season attracts wild boars for easy foraging.',
+    recommended_actions: ['Advise farmers to maintain night vigil', 'Ensure solar fencing is operational']
+  }
+};
+
+app.post('/api/predict/kaziranga', protectRoute, (req, res) => {
+  try {
+    const { species } = req.body;
+    
+    const prediction = kazirangaRules[species] || {
+      severity: 'Medium',
+      confidence: 70,
+      hotspot_zone: 'Unknown Zone',
+      movement_direction: 'Unpredictable movement detected.',
+      expected_time: 'Unknown',
+      reason: 'Insufficient historical data for this specific species in the current season.',
+      recommended_actions: ['Increase general surveillance']
+    };
+
+    console.log(`🦏 Kaziranga AI Forecast: [${species}] -> Severity: ${prediction.severity}`);
+    
+    // Simulate slight AI processing delay
+    setTimeout(() => {
+      return res.status(200).json(prediction);
+    }, 1500);
+
+  } catch (error) {
+    console.error("Kaziranga Prediction error:", error.message);
+    return res.status(500).json({ error: "Failed to generate Kaziranga prediction" });
+  }
+});
+
 // --- 5. WEBSOCKET CONNECTION ---
 io.on('connection', (socket) => {
   console.log(`📡 Frontend Dashboard Connected [ID: ${socket.id}]`);

@@ -1,13 +1,15 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Map, BarChart2, AlertTriangle, Settings, PlusCircle, ShieldAlert, LogOut } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Map, BarChart2, AlertTriangle, PlusCircle, ShieldAlert, Database, Trees } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { usePark } from '../context/ParkContext';
 
 const Sidebar = () => {
   const location = useLocation();
-  const { user, logout } = useAuth(); // 🔐 Access current user and logout function
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { selectedPark } = usePark();
 
-  // Helper function to dynamically highlight the active navigation item
   const getLinkStyle = (path) => ({
     ...styles.link,
     backgroundColor: location.pathname === path ? '#2d2d44' : 'transparent',
@@ -16,44 +18,53 @@ const Sidebar = () => {
 
   return (
     <div style={styles.sidebar}>
-      <div style={styles.logoContainer}>
+      <div style={styles.logoContainer} className="animate-fade-in">
         <AlertTriangle color="#ff4444" size={32} />
         <h2 style={styles.title}>HWC Alert</h2>
       </div>
-      
+
+      {/* Park Indicator */}
+      <div
+        onClick={() => navigate('/select')}
+        style={styles.parkIndicator}
+        className="hover-elevate"
+      >
+        <Trees size={16} color="#10b981" />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Active Park</div>
+          <div style={{ fontSize: '0.8rem', color: '#f1f5f9', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{selectedPark.name}</div>
+        </div>
+        <span style={{ fontSize: '0.65rem', color: '#10b981', fontWeight: 700, flexShrink: 0 }}>SWITCH</span>
+      </div>
+
       <nav style={styles.nav}>
-        <Link to="/" style={getLinkStyle('/')}>
+        <Link to="/" style={getLinkStyle('/')} className="sidebar-link">
           <Map size={20} />
           <span>Live Map</span>
         </Link>
-        <Link to="/analytics" style={getLinkStyle('/analytics')}>
+        <Link to="/analytics" style={getLinkStyle('/analytics')} className="sidebar-link">
           <BarChart2 size={20} />
           <span>Analytics</span>
         </Link>
-        <Link to="/report" style={getLinkStyle('/report')}>
+        <Link to="/report" style={getLinkStyle('/report')} className="sidebar-link">
           <PlusCircle size={20} />
           <span>Report Incident</span>
         </Link>
-        <Link to="/predict" style={getLinkStyle('/predict')}>
+        <Link to="/predict" style={getLinkStyle('/predict')} className="sidebar-link">
           <ShieldAlert size={20} />
           <span>AI Risk Predictor</span>
         </Link>
-        <Link to="/settings" style={getLinkStyle('/settings')}>
-          <Settings size={20} />
-          <span>Settings</span>
+        <Link to="/dataset" style={getLinkStyle('/dataset')} className="sidebar-link">
+          <Database size={20} />
+          <span>Dataset Management</span>
         </Link>
       </nav>
 
-      {/* 🔐 AUTHENTICATED UNIT FOOTER */}
       <div style={styles.footer}>
         <div style={styles.userInfo}>
           <span style={styles.roleTag}>{user?.role || 'Ranger'} Unit</span>
           <strong style={styles.username}>{user?.username || 'Active User'}</strong>
         </div>
-        <button onClick={logout} style={styles.logoutButton}>
-          <LogOut size={18} />
-          <span>Log Out</span>
-        </button>
       </div>
     </div>
   );
@@ -91,6 +102,18 @@ const styles = {
     flexDirection: 'column',
     gap: '10px',
   },
+  parkIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '10px 12px',
+    backgroundColor: '#0f172a',
+    borderRadius: '8px',
+    border: '1px solid #334155',
+    marginBottom: '20px',
+    cursor: 'pointer',
+    transition: 'border-color 0.2s',
+  },
   link: {
     display: 'flex',
     alignItems: 'center',
@@ -99,7 +122,7 @@ const styles = {
     fontSize: '1rem',
     padding: '12px 14px',
     borderRadius: '8px',
-    transition: 'all 0.2s ease',
+    /* transition is handled by the .sidebar-link CSS class */
   },
   footer: {
     marginTop: 'auto',

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const SystemSettings = () => {
   // Sync states with localStorage so they persist across tab switches
@@ -27,17 +28,20 @@ const SystemSettings = () => {
       if (res.ok) {
         setSimStatus('Running');
         localStorage.setItem('simStatus', 'Running');
+        window.dispatchEvent(new Event('storage'));
+        toast.success("Core Engine Simulation Started");
       } else {
         const errorData = await res.json().catch(() => ({ message: res.statusText }));
         console.error("❌ Backend rejected start:", errorData.message);
-        alert(`Could not start engine: ${errorData.message || res.statusText}`);
+        toast.error(`Could not start engine: ${errorData.message || res.statusText}`);
         setSimStatus('Standby');
         localStorage.setItem('simStatus', 'Standby');
+        window.dispatchEvent(new Event('storage'));
       }
     } catch (error) {
       console.error("❌ Network error:", error);
       setSimStatus('Standby');
-      alert('Error: Backend server is unreachable. Make sure your Node server (server.js) is running on port 5000!');
+      toast.error('Error: Backend server is unreachable. Make sure your Node server (server.js) is running on port 5000!');
     }
   };
 
@@ -56,12 +60,14 @@ const SystemSettings = () => {
       if (res.ok) {
         setSimStatus('Standby');
         localStorage.setItem('simStatus', 'Standby');
+        window.dispatchEvent(new Event('storage'));
+        toast.success("Core Engine Simulation Stopped");
       } else {
         const errorData = await res.json().catch(() => ({ message: res.statusText }));
-        alert(`Could not stop engine: ${errorData.message || res.statusText}`);
+        toast.error(`Could not stop engine: ${errorData.message || res.statusText}`);
       }
     } catch (error) {
-      alert('Error: Backend server is unreachable.');
+      toast.error('Error: Backend server is unreachable.');
     }
   };
 
@@ -70,24 +76,32 @@ const SystemSettings = () => {
     const val = e.target.value;
     setMapLayer(val);
     localStorage.setItem('mapLayer', val); 
+    window.dispatchEvent(new Event('storage'));
+    toast.success("Map layer updated");
   };
 
   const handleSoundToggle = (e) => {
     const val = e.target.checked;
     setSoundEnabled(val);
     localStorage.setItem('soundEnabled', val);
+    window.dispatchEvent(new Event('storage'));
+    toast.success(`Sound alerts ${val ? 'enabled' : 'disabled'}`);
   };
 
   const handleEmailToggle = (e) => {
     const val = e.target.checked;
     setEmailAlerts(val);
     localStorage.setItem('emailAlerts', val);
+    window.dispatchEvent(new Event('storage'));
+    toast.success(`Email dispatch ${val ? 'enabled' : 'disabled'}`);
   };
 
   const handleThreatFilterChange = (e) => {
     const val = e.target.value;
     setThreatFilter(val);
     localStorage.setItem('threatFilter', val);
+    window.dispatchEvent(new Event('storage'));
+    toast.success("Threat filter updated");
   };
 
   // --- REAL CSV DOWNLOAD ---
@@ -97,6 +111,12 @@ const SystemSettings = () => {
       const response = await fetch(`http://${serverIP}:5000/api/analytics-data`, {
         headers: { ...(token && { 'Authorization': `Bearer ${token}` }) }
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: response.statusText }));
+        throw new Error(errorData.message || 'Failed to fetch data');
+      }
+
       const data = await response.json();
 
       let csvContent = "Incident_ID,Species,Severity,Location,Latitude,Longitude,Timestamp\n";
@@ -115,8 +135,10 @@ const SystemSettings = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      toast.success("CSV log downloaded successfully!");
     } catch (error) {
-      alert("Export failed. Make sure your Node.js server is running.");
+      console.error("Export error:", error);
+      toast.error(`Export failed: ${error.message}`);
     }
   };
 

@@ -1,35 +1,34 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
-// --- 🔐 AUTHENTICATION IMPORTS ---
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
+import { ParkProvider } from './context/ParkContext';
+import { Toaster } from 'react-hot-toast';
 
-// --- 📊 DASHBOARD COMPONENT IMPORTS ---
 import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard'; // ✅ Imported your new tactical command deck!
+import LandingPage from './components/LandingPage';
+import KazirangaDashboard from './components/KazirangaDashboard/KazirangaDashboard';
 import AnalyticsHub from './components/AnalyticsHub';
-import SystemSettings from './components/SystemSettings';
 import ReportIncident from './components/ReportIncident';
 import RiskPredictor from './components/RiskPredictor';
+import DatasetManagement from './components/DatasetManagement';
 
-// A clean wrapper for the protected dashboard layout
 const DashboardLayout = () => {
+  const location = useLocation();
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
-      {/* 1. Fixed Sidebar stays on the left */}
+    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0f172a' }}>
       <Sidebar />
-      
-      {/* 2. Main Content Area shifts right of the 250px sidebar */}
-      <div style={{ marginLeft: '250px', width: '100%' }}>
-        <Routes>
-          {/* Main Tactical Command Center (includes map + daily telemetry) */}
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/analytics" element={<AnalyticsHub />} />
-          <Route path="/settings" element={<SystemSettings />} />
-          <Route path="/report" element={<ReportIncident />} />
-          <Route path="/predict" element={<RiskPredictor />} />
-        </Routes>
+      <div style={{ marginLeft: '250px', width: '100%', position: 'relative' }}>
+        <div key={location.pathname} className="animate-fade-in">
+          <Routes>
+            <Route path="/" element={<KazirangaDashboard />} />
+            <Route path="/analytics" element={<AnalyticsHub />} />
+            <Route path="/report" element={<ReportIncident />} />
+            <Route path="/predict" element={<RiskPredictor />} />
+            <Route path="/dataset" element={<DatasetManagement />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );
@@ -38,21 +37,15 @@ const DashboardLayout = () => {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          {/* Public routes (e.g., Login) can be added here if needed */}
-          
-          {/* Protected Dashboard Gatekeeper */}
-          <Route 
-            path="/*" 
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
-      </Router>
+      <ParkProvider>
+        <Toaster position="top-right" />
+        <Router>
+          <Routes>
+            <Route path="/select" element={<LandingPage />} />
+            <Route path="/*" element={<DashboardLayout />} />
+          </Routes>
+        </Router>
+      </ParkProvider>
     </AuthProvider>
   );
 }

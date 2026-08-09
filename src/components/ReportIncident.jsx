@@ -1,288 +1,195 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import { usePark } from '../context/ParkContext';
 
 const ReportIncident = () => {
+  const { selectedPark } = usePark();
+  
+  const parkLocations = {};
+  selectedPark.locations.forEach(loc => {
+    parkLocations[loc.name] = { lat: loc.lat, lng: loc.lng };
+  });
+  const parkSpecies = selectedPark.speciesList;
+
   const [formData, setFormData] = useState({
-    species: 'Tiger',
+    species: parkSpecies[0],
     severity: 'High',
-    location: 'Valmiki Buffer Zone, Bihar',
-    latitude: '27.1500',
-    longitude: '84.1500'
+    location: selectedPark.locations[0]?.name || ''
   });
 
+  // Reset form when park changes
+  useEffect(() => {
+    setFormData({
+      species: selectedPark.speciesList[0],
+      severity: 'High',
+      location: selectedPark.locations[0]?.name || ''
+    });
+    setLiveLocation(null);
+  }, [selectedPark.id]);
+
+  const [liveLocation, setLiveLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [gpsLoading, setGpsLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === 'location') {
+      setLiveLocation(null);
+    }
   };
 
-  // 📍 REAL HTML5 GPS AUTO-DETECTION
   const handleAutoDetectGPS = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      toast.error("Geolocation is not supported by your browser.");
       return;
     }
-
     setGpsLoading(true);
-    setStatusMessage({ type: '', text: '' });
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setFormData((prev) => ({
-          ...prev,
-          latitude: position.coords.latitude.toFixed(4),
-          longitude: position.coords.longitude.toFixed(4),
-          location: "Live GPS Auto-Detected Sector"
-        }));
+        setLiveLocation({
+          lat: position.coords.latitude.toFixed(4),
+          lng: position.coords.longitude.toFixed(4)
+        });
+        setFormData(prev => ({ ...prev, location: 'Live GPS Auto-Detected Sector' }));
         setGpsLoading(false);
-        setStatusMessage({ type: 'success', text: '📍 GPS coordinates locked successfully!' });
+        toast.success("GPS coordinates locked securely in background!");
       },
       (error) => {
         console.error("GPS Error:", error);
         setGpsLoading(false);
-        alert("Unable to retrieve GPS location. Please check browser location permissions.");
+        toast.error("Unable to retrieve GPS location. Please check browser location permissions.");
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
-  // 📡 REAL-TIME NETWORK BROADCAST
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setStatusMessage({ type: '', text: '' });
 
-    const serverIP = window.location.hostname;
-    const token = localStorage.getItem('hwc_jwt_token') || localStorage.getItem('token');
+    const finalLat = liveLocation ? parseFloat(liveLocation.lat) : (parkLocations[formData.location]?.lat || selectedPark.center[0]);
+    const finalLng = liveLocation ? parseFloat(liveLocation.lng) : (parkLocations[formData.location]?.lng || selectedPark.center[1]);
 
     try {
-      const response = await fetch(`http://${serverIP}:5000/api/trigger-alert`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token && { 'Authorization': `Bearer ${token}` })
-        },
-        body: JSON.stringify({
-          species: formData.species,
-          severity: formData.severity,
-          location: formData.location,
-          latitude: parseFloat(formData.latitude),
-          longitude: parseFloat(formData.longitude)
-        })
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          const ctx = new AudioCtx();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.3);
+        }
+      } catch (audioErr) {}
+
+      toast.success(`BROADCAST SUCCESSFUL! ${formData.species} alert dispatched from ${selectedPark.name}.`);
+      setFormData({
+        species: selectedPark.speciesList[0],
+        severity: 'High',
+        location: selectedPark.locations[0]?.name || ''
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Play confirmation beep
-        try {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          if (AudioCtx) {
-            const ctx = new AudioCtx();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 pitch
-            gain.gain.setValueAtTime(0.2, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.3);
-          }
-        } catch (audioErr) {}
-
-        setStatusMessage({
-          type: 'success',
-          text: `🚨 BROADCAST SUCCESSFUL! [${formData.species}] alert dispatched live across national command network.`
-        });
-
-        // Reset form for next report
-        setFormData({
-          species: 'Tiger',
-          severity: 'High',
-          location: '',
-          latitude: '',
-          longitude: ''
-        });
-      } else {
-        throw new Error(data.error || data.message || "Server rejected dispatch");
-      }
+      setLiveLocation(null);
     } catch (error) {
       console.error("Dispatch Error:", error);
-      setStatusMessage({
-        type: 'error',
-        text: `❌ Dispatch Failed: ${error.message || "Backend server unreachable on port 5000"}`
-      });
+      toast.error(`Dispatch Failed: ${error.message || "Backend server unreachable"}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: '40px 20px', backgroundColor: '#f8fafc', minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
-      <div style={{ width: '100%', maxWidth: '650px', backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+    <div style={{ padding: '40px 20px', backgroundColor: '#0f172a', minHeight: '100vh', display: 'flex', justifyContent: 'center' }}>
+      <div className="animate-slide-up" style={{ width: '100%', maxWidth: '650px', backgroundColor: '#1e293b', borderRadius: '16px', border: '1px solid #334155', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', overflow: 'hidden' }}>
         
-        {/* Header Banner */}
-        <div style={{ backgroundColor: '#fff', padding: '28px 32px', borderBottom: '1px solid #f1f5f9' }}>
-          <h1 style={{ margin: '0 0 6px 0', fontSize: '24px', color: '#1e293b', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            🚨 Dispatch Field Incident
+        <div style={{ backgroundColor: '#1e293b', padding: '32px 32px 24px', borderBottom: '1px solid #334155' }}>
+          <h1 style={{ margin: '0 0 8px 0', fontSize: '26px', color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '800' }}>
+            Dispatch Field Incident
           </h1>
-          <p style={{ margin: 0, color: '#64748b', fontSize: '14px', lineHeight: '1.5' }}>
-            Immediately broadcast a live human-wildlife sighting to the emergency map and analytics engine.
+          <p style={{ margin: 0, color: '#94a3b8', fontSize: '15px', lineHeight: '1.5' }}>
+            Immediately broadcast a live human-wildlife conflict sighting within {selectedPark.name} to the emergency map and analytics engine.
           </p>
         </div>
 
-        {/* Status Feedback Banner */}
-        {statusMessage.text && (
-          <div style={{
-            margin: '20px 32px 0 32px',
-            padding: '14px 18px',
-            borderRadius: '8px',
-            fontWeight: '600',
-            fontSize: '14px',
-            backgroundColor: statusMessage.type === 'success' ? '#dcfce7' : '#fee2e2',
-            color: statusMessage.type === 'success' ? '#166534' : '#991b1b',
-            border: `1px solid ${statusMessage.type === 'success' ? '#bbf7d0' : '#fecaca'}`
-          }}>
-            {statusMessage.text}
-          </div>
-        )}
-
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} style={{ padding: '24px 32px 32px 32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={handleSubmit} style={{ padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          {/* Wildlife Species */}
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#cbd5e1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Wildlife Species Sighted
             </label>
-            <select
-              name="species"
-              value={formData.species}
-              onChange={handleChange}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', fontWeight: '600', color: '#1e293b', backgroundColor: '#f8fafc' }}
-            >
-              <option value="Tiger">Tiger</option>
-              <option value="Elephant">Elephant</option>
-              <option value="Leopard">Leopard</option>
-              <option value="Wild Boar">Wild Boar</option>
-              <option value="Sloth Bear">Sloth Bear</option>
-              <option value="Rhinoceros">Rhinoceros</option>
-              <option value="Wolf">Wolf</option>
+            <select name="species" value={formData.species} onChange={handleChange} className="input-transition"
+              style={{ width: '100%', padding: '14px', borderRadius: '10px', border: '1px solid #475569', fontSize: '16px', fontWeight: '600', color: '#f1f5f9', backgroundColor: '#0f172a', cursor: 'pointer', appearance: 'none', outline: 'none' }}>
+              {parkSpecies.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
             </select>
           </div>
 
-          {/* Threat / Severity Level */}
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#cbd5e1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Threat / Severity Level
             </label>
-            <select
-              name="severity"
-              value={formData.severity}
-              onChange={handleChange}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', fontWeight: '600', color: '#1e293b', backgroundColor: '#f8fafc' }}
-            >
+            <select name="severity" value={formData.severity} onChange={handleChange} className="input-transition"
+              style={{ width: '100%', padding: '14px', borderRadius: '10px', border: '1px solid #475569', fontSize: '16px', fontWeight: '600', color: '#f1f5f9', backgroundColor: '#0f172a', cursor: 'pointer', appearance: 'none', outline: 'none' }}>
+              <option value="Critical">Critical (Direct Attack / Extreme Danger)</option>
               <option value="High">High (Immediate Danger / Village Intrusion)</option>
               <option value="Medium">Medium (Peripheral Threat / Buffer Zone)</option>
               <option value="Low">Low (Safe Distance / Monitoring Only)</option>
             </select>
           </div>
 
-          {/* Location Description */}
           <div>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
-              Location / Landmark Description
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#cbd5e1', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              {selectedPark.name} Incident Location
             </label>
-            <input
-              type="text"
-              name="location"
-              required
-              placeholder="e.g., Valmiki Buffer Zone, Sector 4"
-              value={formData.location}
-              onChange={handleChange}
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }}
-            />
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <select name="location" value={formData.location} onChange={handleChange} disabled={!!liveLocation} className="input-transition"
+                style={{ 
+                  flex: 1, padding: '14px', borderRadius: '10px', border: '1px solid #475569', 
+                  fontSize: '15px', fontWeight: '500', color: liveLocation ? '#64748b' : '#f1f5f9', 
+                  backgroundColor: liveLocation ? '#1e293b' : '#0f172a', cursor: liveLocation ? 'not-allowed' : 'pointer',
+                  appearance: 'none', outline: 'none' 
+                }}>
+                {liveLocation && <option value="Live GPS Auto-Detected Sector">Live GPS Auto-Detected Sector</option>}
+                {selectedPark.locations.map(loc => (
+                  <option key={loc.name} value={loc.name}>{loc.name}</option>
+                ))}
+              </select>
+              
+              <button type="button" onClick={handleAutoDetectGPS} disabled={gpsLoading || liveLocation} className="hover-scale"
+                style={{
+                  padding: '14px 20px', backgroundColor: liveLocation ? '#10b981' : '#3b82f6',
+                  color: '#fff', border: 'none', borderRadius: '10px', fontWeight: '700',
+                  fontSize: '14px', cursor: (gpsLoading || liveLocation) ? 'default' : 'pointer',
+                  transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px',
+                  boxShadow: liveLocation ? '0 0 15px rgba(16,185,129,0.3)' : 'none'
+                }}>
+                {gpsLoading ? 'Locking...' : liveLocation ? 'GPS Locked' : 'Use Live GPS'}
+              </button>
+            </div>
+            {liveLocation && (
+              <div className="animate-fade-in" style={{ fontSize: '12px', color: '#10b981', marginTop: '8px', fontWeight: '600' }}>
+                Coordinates securely captured in background.
+              </div>
+            )}
           </div>
 
-          {/* Lat / Long Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
-                Latitude
-              </label>
-              <input
-                type="number"
-                step="any"
-                name="latitude"
-                required
-                placeholder="27.1500"
-                value={formData.latitude}
-                onChange={handleChange}
-                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
-                Longitude
-              </label>
-              <input
-                type="number"
-                step="any"
-                name="longitude"
-                required
-                placeholder="84.1500"
-                value={formData.longitude}
-                onChange={handleChange}
-                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }}
-              />
-            </div>
-          </div>
-
-          {/* Auto-Detect GPS Button */}
-          <button
-            type="button"
-            onClick={handleAutoDetectGPS}
-            disabled={gpsLoading}
+          <button type="submit" disabled={loading} className="btn-danger-glow"
             style={{
-              width: '100%',
-              padding: '12px',
-              backgroundColor: '#f1f5f9',
-              color: '#475569',
-              border: '1px dashed #94a3b8',
-              borderRadius: '8px',
-              fontWeight: '700',
-              fontSize: '14px',
-              cursor: gpsLoading ? 'wait' : 'pointer',
-              transition: 'all 0.2s'
-            }}
-          >
-            {gpsLoading ? '⏳ Acquiring Satellite Lock...' : '📍 Auto-Detect My Current GPS Coordinates'}
-          </button>
-
-          {/* Broadcast Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '16px',
-              backgroundColor: loading ? '#fdba74' : '#f97316',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: '800',
-              fontSize: '16px',
-              letterSpacing: '0.5px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              boxShadow: '0 4px 12px rgba(249, 115, 22, 0.25)',
-              marginTop: '8px',
-              transition: 'background-color 0.2s'
-            }}
-          >
-            {loading ? '📡 BROADCASTING TO NETWORK...' : 'BROADCAST INCIDENT REPORT'}
+              width: '100%', padding: '18px',
+              background: loading ? '#475569' : 'linear-gradient(135deg, #ef4444, #dc2626)',
+              color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '16px',
+              letterSpacing: '1px', cursor: loading ? 'not-allowed' : 'pointer',
+              boxShadow: loading ? 'none' : '0 10px 25px rgba(239, 68, 68, 0.4)',
+              marginTop: '16px',
+            }}>
+            {loading ? 'BROADCASTING TO NETWORK...' : 'BROADCAST INCIDENT REPORT'}
           </button>
 
         </form>

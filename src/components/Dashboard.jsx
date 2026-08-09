@@ -78,7 +78,16 @@ const Dashboard = () => {
       localStorage.setItem('simStatus', data.status);
     });
 
-    return () => socket.disconnect();
+    const handleStorage = () => {
+      setMapLayer(localStorage.getItem('mapLayer') || 'street');
+      setSystemRunning(localStorage.getItem('simStatus') === 'Running');
+    };
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      socket.disconnect();
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   const safeIncidents = useMemo(() => Array.isArray(incidents) ? incidents : [], [incidents]);

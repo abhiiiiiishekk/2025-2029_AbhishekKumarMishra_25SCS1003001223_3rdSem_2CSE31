@@ -1,0 +1,222 @@
+/* ═══════════════════════════════════════════════════════
+   GLOBAL ANIMATION & TRANSITION SYSTEM
+   Human-Wildlife Conflict Dashboard
+   ═══════════════════════════════════════════════════════ */
+
+/* --- Design Tokens --- */
+:root {
+  --transition-fast: 200ms;
+  --transition-medium: 300ms;
+  --transition-slow: 500ms;
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── KEYFRAMES ─── */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUpSubtle {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+}
+
+/* ─── PAGE TRANSITION CLASSES ─── */
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-medium) var(--ease-smooth) both;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--transition-medium) var(--ease-smooth) both;
+}
+
+/* Staggered children: apply to parent, children get delayed slide-ups */
+.stagger-children > * {
+  animation: slideUpSubtle var(--transition-medium) var(--ease-smooth) both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ─── INTERACTIVE HOVER CLASSES ─── */
+
+/* Subtle scale for buttons and small interactive items */
+.hover-scale {
+  transition: transform var(--transition-fast) var(--ease-out),
+              box-shadow var(--transition-fast) var(--ease-out);
+}
+.hover-scale:hover {
+  transform: scale(1.03);
+}
+.hover-scale:active {
+  transform: scale(0.98);
+}
+
+/* Elevation lift for cards */
+.hover-elevate {
+  transition: transform var(--transition-fast) var(--ease-out),
+              box-shadow var(--transition-fast) var(--ease-out),
+              border-color var(--transition-fast) var(--ease-out);
+}
+.hover-elevate:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.3),
+              0 4px 10px -3px rgba(0, 0, 0, 0.2);
+  border-color: #475569;
+}
+
+/* Sidebar link hover */
+.sidebar-link {
+  transition: background-color var(--transition-fast) var(--ease-out),
+              color var(--transition-fast) var(--ease-out),
+              transform var(--transition-fast) var(--ease-out);
+}
+.sidebar-link:hover {
+  background-color: #2d2d44 !important;
+  color: #ffffff !important;
+  transform: translateX(3px);
+}
+
+/* Button hover glow */
+.btn-glow {
+  transition: transform var(--transition-fast) var(--ease-out),
+              box-shadow var(--transition-fast) var(--ease-out),
+              background var(--transition-fast) var(--ease-out);
+}
+.btn-glow:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+.btn-glow:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-danger-glow {
+  transition: transform var(--transition-fast) var(--ease-out),
+              box-shadow var(--transition-fast) var(--ease-out),
+              background var(--transition-fast) var(--ease-out);
+}
+.btn-danger-glow:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+.btn-danger-glow:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ─── FORM INPUT FOCUS TRANSITIONS ─── */
+.input-transition {
+  transition: border-color var(--transition-fast) var(--ease-out),
+              box-shadow var(--transition-fast) var(--ease-out);
+}
+.input-transition:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* ─── SKELETON / LOADING ─── */
+.skeleton {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 8px;
+}
+
+.skeleton-card {
+  background: linear-gradient(90deg, #1e293b 25%, #293548 50%, #1e293b 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.8s infinite linear;
+  border-radius: 14px;
+  border: 1px solid #334155;
+}
+
+/* ─── CHART CONTAINER FADE ─── */
+.chart-appear {
+  animation: slideUpSubtle var(--transition-slow) var(--ease-smooth) both;
+}
+
+/* ─── MAP CONTAINER ─── */
+.map-fade-in {
+  animation: fadeIn var(--transition-slow) var(--ease-smooth) both;
+  animation-delay: 100ms;
+}
+
+/* ─── SCROLLBAR STYLING (subtle) ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
